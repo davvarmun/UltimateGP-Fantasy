@@ -2,10 +2,10 @@ package com.davvarmun.ultimategp.ultimategp.auth.email;
 
 import java.time.LocalDateTime;
 import java.util.Random;
-import com.isppG8.infantem.infantem.auth.payload.request.EmailRequest;
-import com.isppG8.infantem.infantem.user.UserService;
-import com.isppG8.infantem.infantem.user.User;
-import com.isppG8.infantem.infantem.exceptions.ResourceNotOwnedException;
+import com.davvarmun.ultimategp.ultimategp.auth.payload.request.EmailRequest;
+import com.davvarmun.ultimategp.ultimategp.user.UserService;
+import com.davvarmun.ultimategp.ultimategp.user.User;
+import com.davvarmun.ultimategp.ultimategp.exceptions.ResourceNotOwnedException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

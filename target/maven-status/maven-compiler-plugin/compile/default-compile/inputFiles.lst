@@ -3,8 +3,15 @@ C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\d
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\AuthoritiesRepository.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\AuthoritiesService.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\AuthService.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\dto\AuthDTO.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\email\EmailDetails.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\email\EmailDetailsService.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\email\EmailValidation.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\email\EmailValidationRepository.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\email\EmailValidationService.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\jwt\JwtResponse.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\jwt\JwtUtils.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\payload\request\EmailRequest.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\payload\request\LoginRequest.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\payload\request\SignupRequest.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\auth\payload\response\JwtResponse.java
@@ -15,6 +22,7 @@ C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\d
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\config\SecurityConfig.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\config\services\UserDetailsImpl.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\config\services\UserDetailsServiceImpl.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\config\WebConfig.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\exceptions\ErrorMessage.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\exceptions\ExceptonHandleController.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\exceptions\ResourceNotFoundException.java
@@ -25,3 +33,4 @@ C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\d
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\user\UserController.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\user\UserRepository.java
 C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\user\UserService.java
+C:\Users\david\OneDrive\Escritorio\TFG-WS\UltimateGP-Fantasy\src\main\java\com\davvarmun\ultimategp\ultimategp\util\Tuple.java
