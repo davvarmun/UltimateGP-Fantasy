@@ -2,6 +2,8 @@ import { View, Text, Dimensions, Image } from "react-native";
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import { Link } from "expo-router";
+// import TopNavBar from "./app(tabs)/team/team";
+import TopNavBar from "../app/(tabs)/team/team"
 
 export default function Index() {
   const { height } = Dimensions.get("window");
@@ -29,6 +31,9 @@ export default function Index() {
 
   return (
     <View style={[gs.container, { height }]}>
+      {/* Barra de navegación en la parte superior */}
+      <TopNavBar />
+
       <Image
         source={require("../static/images/profile.webp")}
         style={[
@@ -77,5 +82,3 @@ export default function Index() {
     </View>
   );
 }
-
-
