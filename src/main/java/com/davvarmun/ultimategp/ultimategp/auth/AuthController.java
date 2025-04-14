@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.security.authentication.BadCredentialsException;
 
+@Tag(name = "Authentication", description = "Gestión de la autenticación de usuarios")
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -39,17 +40,22 @@ public class AuthController {
     private final UserService userService;
     private final JwtUtils jwtUtils;
     private final AuthService authService;
+    private final EmailValidationService emailValidationService;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils,
-            AuthService authService) {
+            AuthService authService, EmailValidationService emailValidationService) {
         this.userService = userService;
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
+        this.emailValidationService = emailValidationService;
     }
 
-    @PostMapping("/signin")
+    @Operation(summary = "Iniciar sesión", description = "Autentica un usuario y devuelve un token JWT.") @ApiResponse(
+            responseCode = "200", description = "Autenticación exitosa",
+            content = @Content(schema = @Schema(implementation = JwtResponse.class))) @ApiResponse(responseCode = "400",
+                    description = "Credenciales incorrectas") @PostMapping("/signin")
     public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -69,8 +75,13 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<Object> authSantos(@RequestHeader HttpHeaders headers) {
+    @Operation(summary = "Obtener usuario autenticado",
+            description = "Obtiene la información del usuario autenticado a partir del token JWT.") @ApiResponse(
+                    responseCode = "200", description = "Usuario autenticado",
+                    content = @Content(schema = @Schema(implementation = AuthDTO.class))) @ApiResponse(
+                            responseCode = "400",
+                            description = "Token inválido o error de autenticación") @GetMapping("/me")
+    public ResponseEntity<Object> authDavid(@RequestHeader HttpHeaders headers) {
         try {
             if (!headers.containsKey("Authorization")) {
                 throw new BadCredentialsException("");
@@ -85,7 +96,7 @@ public class AuthController {
             if (loggedInUser == null) {
                 throw new BadCredentialsException("");
             }
-            return ResponseEntity.ok().body(loggedInUser);
+            return ResponseEntity.ok().body(new AuthDTO(loggedInUser));
         } catch (BadCredentialsException exception) {
             return ResponseEntity.badRequest().body(new MessageResponse("Bad Credentials!"));
         } catch (Exception e) {
@@ -93,16 +104,38 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/validate")
+    @Operation(summary = "Validar token JWT", description = "Verifica si un token JWT es válido.") @ApiResponse(
+            responseCode = "200", description = "Token válido",
+            content = @Content(schema = @Schema(implementation = Boolean.class))) @GetMapping("/validate")
     public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
         Boolean isValid = jwtUtils.validateJwtToken(token);
         return ResponseEntity.ok(isValid);
     }
 
-    @PostMapping("/signup")
+    @Operation(summary = "Registrar nuevo usuario",
+            description = "Registra un usuario en el sistema y devuelve un token JWT.") @ApiResponse(
+                    responseCode = "200", description = "Usuario registrado exitosamente",
+                    content = @Content(schema = @Schema(implementation = JwtResponse.class))) @ApiResponse(
+                            responseCode = "400",
+                            description = "Usuario o email ya en uso o código de validación incorrecto") @PostMapping("/signup")
     public ResponseEntity<Object> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (userService.findByUsername(signUpRequest.getUsername()) != null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+        boolean existingUser = (userService.findByUsername(signUpRequest.getUsername()) != null);
+        boolean existingEmail = (userService.findByEmail(signUpRequest.getEmail()) != null);
+        if (existingUser || existingEmail) {
+            String e = "";
+            if (existingEmail) {
+                if (existingUser) {
+                    e = "Ese usuario e email están siendo utilizados";
+                } else {
+                    e = "Ese email ya está siendo utilizado";
+                }
+            } else {
+                e = "Ese usuario ya está siendo utilizado";
+            }
+            return ResponseEntity.badRequest().body(new MessageResponse(e));
+        }
+        if (!emailValidationService.validateCode(signUpRequest.getEmail(), signUpRequest.getCode())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Wrong validation code"));
         }
         authService.createUser(signUpRequest);
         Authentication authentication = authenticationManager.authenticate(

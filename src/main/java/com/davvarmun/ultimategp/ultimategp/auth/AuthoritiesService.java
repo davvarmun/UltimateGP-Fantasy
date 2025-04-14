@@ -19,4 +19,24 @@ public class AuthoritiesService {
         return authoritiesRepository.findByAuthority(authority)
                 .orElseThrow(() -> new RuntimeException("Authority does not exist"));
     }
+
+    @Transactional(readOnly = true)
+    public User findCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null)
+            throw new ResourceNotFoundException("Nobody authenticated!");
+        else
+            return authoritiesRepository.findByUsername(auth.getName());
+    }
+
+    public boolean isAdmin() {
+
+        // Not pretty, but circular dependency otherwise, sorry
+        User user = this.findCurrentUser();
+
+        Authorities authorities = user.getAuthorities();
+        Authorities adminAuth = authoritiesRepository.findByAuthority("admin").orElse(null);
+
+        return authorities.equals(adminAuth);
+    }
 }

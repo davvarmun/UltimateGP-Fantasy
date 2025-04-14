@@ -162,7 +162,7 @@ export default function Signup() {
 
       const data = await signupResponse.json();
       await storeToken(data.token);
-      router.push("/recipes");
+      router.push("/signin");
 
     } catch (error) {
       console.error("An error ocurred: ", error);

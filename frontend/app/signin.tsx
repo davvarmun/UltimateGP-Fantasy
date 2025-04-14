@@ -18,6 +18,7 @@ export default function Signin() {
   const gs = require("../static/styles/globalStyles");
 
   const handleSubmit = async () => {
+    console.log("API URL:", apiUrl);
     try {
       const response = await fetch(`${apiUrl}/api/v1/auth/signin`, {
         method: "POST",
@@ -25,24 +26,30 @@ export default function Signin() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: username,
-          password: password,
+          username,
+          password,
         }),
       });
+  
+      const data = await response.json();
 
+      console.log("Respuesta del backend:", data);
+  
       if (!response.ok) {
-        setErrorMessage("Algo no ha ido bien. Verifica tus credenciales.");
+        setErrorMessage(data.message || "Algo no ha ido bien. Verifica tus credenciales.");
         return;
       }
-
-      const data = await response.json();
+  
       await storeToken(data.token);
       await checkAuth();
-      router.replace("/recipes");
+      router.replace("/");
+  
     } catch (error) {
       console.error("An error occurred: ", error);
+      setErrorMessage("Error al conectar con el servidor.");
     }
   };
+  
 
   const handleGoogleSuccess = async (response: any) => {
     try {

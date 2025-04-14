@@ -38,11 +38,6 @@ public class EmailValidation {
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime codeSentDate;
 
-    @NotNull
-    @Min(0)
-    @Max(999999)
-    private Integer code;
-
     public EmailValidation() {
 
     }
