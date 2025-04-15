@@ -1,0 +1,20 @@
+# Archivos compilados Java
+*.class
+
+# Carpeta de salida de Maven
+target/
+
+# Configuración de IDEs
+*.iml
+.idea/
+.vscode/
+*.log
+*.swp
+.DS_Store
+.project
+.classpath
+.settings/
+
+# Maven wrapper
+.mvn/
+!mvn/wrapper/maven-wrapper.jar
