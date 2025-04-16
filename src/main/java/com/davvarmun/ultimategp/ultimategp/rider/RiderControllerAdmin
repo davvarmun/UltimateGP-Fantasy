@@ -1,0 +1,52 @@
+package com.davvarmun.ultimategp.ultimategp.rider;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
+
+@Tag(name = "Riders (Admin)", description = "Gestión de pilotos para administradores")
+@RestController
+@RequestMapping("/api/v1/admin/riders")
+public class RiderAdminController {
+
+    private final RiderService riderService;
+
+    @Autowired
+    public RiderAdminController(RiderService riderService) {
+        this.riderService = riderService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Rider>> getAllRiders() {
+        List<Rider> riders = riderService.getAllRiders();
+        return ResponseEntity.ok(riders);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Rider> getRiderById(@PathVariable Integer id) {
+        Rider rider = riderService.getRiderById(id);
+        return ResponseEntity.ok(rider);
+    }
+
+    @PostMapping
+    public ResponseEntity<Rider> createRider(@RequestBody Rider rider) {
+        Rider createdRider = riderService.createRider(rider);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdRider);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Rider> updateRider(@PathVariable Integer id, @RequestBody Rider updatedRider) {
+        Rider rider = riderService.updateRider(id, updatedRider);
+        return ResponseEntity.ok(rider);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRider(@PathVariable Integer id) {
+        riderService.deleteRider(id);
+        return ResponseEntity.noContent().build();
+    }
+}
