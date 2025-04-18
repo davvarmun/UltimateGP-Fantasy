@@ -2,8 +2,7 @@ import { View, Text, Dimensions, Image } from "react-native";
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import { Link } from "expo-router";
-// import TopNavBar from "./app(tabs)/team/team";
-import TopNavBar from "../app/(tabs)/team/team"
+import TopNavBar from "../app/(tabs)/navBar/topNavBar";
 
 export default function Index() {
   const { height } = Dimensions.get("window");

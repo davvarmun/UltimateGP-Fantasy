@@ -27,20 +27,16 @@ public class TeamController {
     @Operation(summary = "Obtener todos los equipos", description = "Lista completa de equipos disponibles")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Equipos encontrados"),
-        @ApiResponse(responseCode = "204", description = "No hay equipos registrados")
+        @ApiResponse(responseCode = "204", description = "No hay equipos registrados") // referencia
     })
-    @GetMapping
+    @GetMapping(produces = "application/json") // 👈 Asegura que siempre se devuelva application/json
     public ResponseEntity<List<TeamDTO>> getAllTeams() {
         List<TeamDTO> teams = teamService.getAllTeams()
                 .stream()
                 .map(TeamDTO::new)
                 .collect(Collectors.toList());
 
-        if (teams.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(teams);
+        return ResponseEntity.ok(teams); // incluso si está vacío, devuelve []
     }
 
     @Operation(summary = "Obtener equipo por ID", description = "Devuelve los datos del equipo seleccionado")

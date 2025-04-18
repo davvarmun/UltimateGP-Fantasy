@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface TeamRepository extends CrudRepository<Team, Integer> {
 
-    @Query("SELECT t FROM Team t")
+    // 👇 JOIN FETCH para traer también los riders asociados
+    @Query("SELECT DISTINCT t FROM Team t LEFT JOIN FETCH t.riders")
     List<Team> getAllTeams();
-
 }
