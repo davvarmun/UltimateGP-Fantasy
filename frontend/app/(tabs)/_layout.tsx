@@ -44,7 +44,7 @@ export default function TabLayout() {
 
       {/* Pantalla de Pilotos */}
       <Tabs.Screen
-        name="riders"  // Nombre de la pantalla para Pilotos
+        name="rider"  // Nombre de la pantalla para Pilotos
         options={{
           headerShown: false,
           lazy: true,

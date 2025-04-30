@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getToken } from "../../../utils/jwtStorage"; // Aquí puedes usar tu función de token si es necesario
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { getToken } from "../../../utils/jwtStorage"; // Opcional según tu autenticación
 
 type Rider = {
   id: number;
@@ -15,7 +16,7 @@ type Rider = {
   };
 };
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL; // Asegúrate de que esta variable esté definida
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const getFlagEmoji = (country: string) => {
   const codePoints = country
@@ -34,12 +35,11 @@ export default function RiderPage() {
     const getUserToken = async () => {
       // const token = await getToken();
       // setJwt(token);
-      setJwt("FAKE-TOKEN"); // ⚠️ SOLO TEMPORAL mientras se implementa login
+      setJwt("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZXhwIjoxNjY2NTYwNzkzLCJzdWIiOiJqb2huZG9lQGV4YW1wbGUuY29tIn0.kHq7bVgSjehz1ZK0j3mM0IGMIQ6t2hlH0dZtU4mlyJ4"); // ⚠️ Temporal
     };
     getUserToken();
   }, []);
-  
-  // Obtener los pilotos usando el JWT
+
   useEffect(() => {
     if (!jwt) return;
 
@@ -52,16 +52,22 @@ export default function RiderPage() {
             'Content-Type': 'application/json',
           },
         });
-    
-        const text = await response.text(); // 👈 leer como texto primero
+        
+        console.log("Status:", response.status);
+        console.log("Headers:", [...response.headers.entries()]);
+        const text = await response.text();
+        console.log("Raw response text:", text);
+
+        //const text = await response.text();
         if (!response.ok) throw new Error('Error al obtener los pilotos: ' + response.statusText);
-        if (!text) throw new Error('Respuesta vacía del servidor'); // 👈
-    
-        const data = JSON.parse(text); // 👈 luego lo parseas tú
+        if (!text) throw new Error('Respuesta vacía del servidor');
+
+        const data = JSON.parse(text);
         console.log('Pilotos obtenidos:', data);
         setRiders(data);
       } catch (error) {
         console.error('Error fetching riders:', error);
+      } finally {
         setLoading(false);
       }
     };
@@ -69,47 +75,72 @@ export default function RiderPage() {
     fetchRiders();
   }, [jwt]);
 
-  if (loading) return <p className="p-4">Cargando pilotos...</p>;
+  if (loading) {
+    return (
+      <View style={{ padding: 16, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#4F46E5" />
+        <Text style={{ marginTop: 10 }}>Cargando pilotos...</Text>
+      </View>
+    );
+  }
 
   return (
-    <div className="p-6 bg-gradient-to-br from-indigo-50 to-white min-h-screen">
-      <h1 className="text-4xl font-extrabold text-center text-indigo-700 mb-10">
+    <ScrollView style={{ flex: 1, padding: 20, backgroundColor: '#F0F4FF' }}>
+      <Text style={{
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#4338CA',
+        textAlign: 'center',
+        marginBottom: 20,
+      }}>
         🏍️ Pilotos
-      </h1>
+      </Text>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-        {riders.map((rider) => (
-          <div
-            key={rider.id}
-            className="bg-white rounded-3xl shadow-xl border border-indigo-100 p-6 hover:scale-[1.01] transition-transform duration-200"
-          >
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold text-indigo-600">
-                {rider.name || 'Nombre no disponible'} {rider.surname || 'Apellido no disponible'}
-              </h2>
-              <p className="text-sm text-gray-500">
-                Número de moto: <span className="font-semibold">{rider.bikeNumber || 'N/A'}</span>
-              </p>
-              <p className="text-sm text-gray-500">
-                Equipo: <span className="font-semibold">{rider.team?.name || 'Equipo no asignado'}</span>
-              </p>
-            </div>
+      {riders.map((rider) => (
+        <View
+          key={rider.id}
+          style={{
+            backgroundColor: '#fff',
+            borderRadius: 20,
+            padding: 16,
+            marginBottom: 16,
+            shadowColor: '#000',
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#4F46E5' }}>
+            {rider.name || 'Nombre no disponible'} {rider.surname || 'Apellido no disponible'}
+          </Text>
+          <Text style={{ fontSize: 14, color: '#6B7280', marginTop: 4 }}>
+            Número de moto: {rider.bikeNumber || 'N/A'}
+          </Text>
+          <Text style={{ fontSize: 14, color: '#6B7280' }}>
+            Equipo: {rider.team?.name || 'Equipo no asignado'}
+          </Text>
 
-            <div className="flex items-center justify-between bg-indigo-100 rounded-xl p-4 mb-4">
-              <span className="text-indigo-700 font-medium text-sm flex items-center gap-2">
-                🥇 {rider.points || 0} puntos
-              </span>
-              <span className="text-gray-600 text-sm flex items-center gap-2">
-                {getFlagEmoji(rider.nationality || 'XX')} {rider.nationality || 'Desconocido'}
-              </span>
-            </div>
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 12,
+            backgroundColor: '#E0E7FF',
+            borderRadius: 12,
+            padding: 10,
+          }}>
+            <Text style={{ color: '#3730A3', fontWeight: '600' }}>
+              🥇 {rider.points || 0} puntos
+            </Text>
+            <Text style={{ color: '#4B5563' }}>
+              {getFlagEmoji(rider.nationality || 'XX')} {rider.nationality || 'Desconocido'}
+            </Text>
+          </View>
 
-            <div>
-              <p className="text-sm text-gray-500">Piloto #{rider.bikeNumber || 'N/A'}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          <Text style={{ marginTop: 8, fontSize: 12, color: '#6B7280' }}>
+            Piloto #{rider.bikeNumber || 'N/A'}
+          </Text>
+        </View>
+      ))}
+    </ScrollView>
   );
 }

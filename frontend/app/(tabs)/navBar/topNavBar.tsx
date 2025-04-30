@@ -21,7 +21,7 @@ export default function TopNavBar() {
         </TouchableOpacity>
         
         {/* Enlace a Pilotos */}
-        <TouchableOpacity onPress={() => router.push("/riders")}>
+        <TouchableOpacity onPress={() => router.push("/rider")}>
           <Text style={gs.navText}>Pilotos</Text>
         </TouchableOpacity>
 

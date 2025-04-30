@@ -36,7 +36,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/api/v1/team", "/api/v1/team/**").permitAll() // Permitir libre acceso a todos los endpoints de /team
+                .requestMatchers("/api/v1/team", "/api/v1/team/**", "/api/v1/riders").permitAll() // Permitir libre acceso a todos los endpoints de /team
                 .requestMatchers("/api/v1/auth/**").permitAll()  // Permitir libre acceso a /auth
                 .anyRequest().authenticated())                   // El resto requiere autenticación
             .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)

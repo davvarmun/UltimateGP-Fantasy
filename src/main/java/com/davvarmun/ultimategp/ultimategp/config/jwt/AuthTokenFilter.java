@@ -32,7 +32,7 @@ protected void doFilterInternal(HttpServletRequest request, HttpServletResponse 
         throws ServletException, IOException {
     try {
         // Omitir validación de JWT para rutas públicas como /api/v1/team/**
-        if (request.getRequestURI().startsWith("/api/v1/team") || request.getRequestURI().startsWith("/api/v1/auth")) {
+        if (request.getRequestURI().startsWith("/api/v1/team") || request.getRequestURI().startsWith("/api/v1/team") || request.getRequestURI().startsWith("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return; // Se salta la validación JWT para estas rutas
         }
