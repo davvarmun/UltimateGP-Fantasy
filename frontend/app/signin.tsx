@@ -19,16 +19,26 @@ export default function Signin() {
 
   const handleSubmit = async () => {
     try {
+      console.log("Enviando login:", {
+        username,
+        password,
+        url: `${apiUrl}/api/v1/auth/signin`,
+      });
+      
       const response = await fetch(`${apiUrl}/api/v1/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: username,
-          password: password,
+          username,
+          password,
         }),
       });
+      
+      const text = await response.text();
+      console.log("Respuesta status:", response.status);
+      console.log("Respuesta body:", text);
 
       if (!response.ok) {
         setErrorMessage("Algo no ha ido bien. Verifica tus credenciales.");
