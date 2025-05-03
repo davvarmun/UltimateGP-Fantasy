@@ -32,9 +32,8 @@ public class Team {
     @Size(min = 2, max = 100)
     private String constructor;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // 👈 Añadido EAGER
     private List<Rider> riders = new ArrayList<>();
 
     private Integer points;
-
 }

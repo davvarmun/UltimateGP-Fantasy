@@ -19,9 +19,16 @@ export default function TopNavBar() {
         <TouchableOpacity onPress={() => router.push("/team")}>
           <Text style={gs.navText}>Equipo</Text>
         </TouchableOpacity>
+        
+        {/* Enlace a Pilotos */}
+        <TouchableOpacity onPress={() => router.push("/rider")}>
+          <Text style={gs.navText}>Pilotos</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => router.push("/leagues")}>
           <Text style={gs.navText}>Ligas</Text>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => router.push("/stats")}>
           <Text style={gs.navText}>Estadísticas</Text>
         </TouchableOpacity>

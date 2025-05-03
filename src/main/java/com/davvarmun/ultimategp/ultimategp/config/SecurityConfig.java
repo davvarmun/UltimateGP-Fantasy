@@ -15,11 +15,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import com.davvarmun.ultimategp.ultimategp.config.jwt.AuthEntryPointJwt;
 import com.davvarmun.ultimategp.ultimategp.config.jwt.AuthTokenFilter;
+import com.davvarmun.ultimategp.ultimategp.config.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -29,16 +31,24 @@ public class SecurityConfig {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(
-                        (exepciontHandling) -> exepciontHandling.authenticationEntryPoint(unauthorizedHandler))
-                .authorizeHttpRequests((requests) -> requests.requestMatchers("api/v1/recipes/*").authenticated()
-                        .requestMatchers("api/v1/auth/*").permitAll().anyRequest().authenticated())
-                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-                .formLogin(AbstractHttpConfigurer::disable).httpBasic(Customizer.withDefaults());
+        http.cors(withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+            .authorizeHttpRequests((requests) -> requests
+                .requestMatchers("/api/v1/team", "/api/v1/team/**", "/api/v1/riders").permitAll() // Permitir libre acceso a todos los endpoints de /team
+                .requestMatchers("/api/v1/auth/**").permitAll()  // Permitir libre acceso a /auth
+                .anyRequest().authenticated())                   // El resto requiere autenticación
+            .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(Customizer.withDefaults())
+            .authenticationProvider(authenticationProvider(userDetailsService));
+
         return http.build();
     }
 
@@ -55,5 +65,13 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(UserDetailsServiceImpl userDetailsService) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 }
