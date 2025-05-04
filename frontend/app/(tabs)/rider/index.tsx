@@ -2,21 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
-import { getToken } from "../../../utils/jwtStorage"; // Opcional según tu autenticación
 
 type Rider = {
-  id: number;
   name: string;
-  surname: string;
-  bikeNumber: number;
+  bikeNumber: string;
+  team: string;
   nationality: string;
-  points: number;
-  team: {
-    name: string;
-  };
 };
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+const apiUrl = 'http://localhost:8080/api/v1/riders/scrape';  // URL de tu servidor Spring Boot
 
 const getFlagEmoji = (country: string) => {
   const codePoints = country
@@ -27,53 +21,36 @@ const getFlagEmoji = (country: string) => {
 };
 
 export default function RiderPage() {
-  const [riders, setRiders] = useState<Rider[]>([]);
+  const [riders, setRiders] = useState<Rider[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [jwt, setJwt] = useState<string | null>(null);
 
   useEffect(() => {
-    const getUserToken = async () => {
-      // const token = await getToken();
-      // setJwt(token);
-      setJwt("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZXhwIjoxNjY2NTYwNzkzLCJzdWIiOiJqb2huZG9lQGV4YW1wbGUuY29tIn0.kHq7bVgSjehz1ZK0j3mM0IGMIQ6t2hlH0dZtU4mlyJ4"); // ⚠️ Temporal
-    };
-    getUserToken();
-  }, []);
-
-  useEffect(() => {
-    if (!jwt) return;
-
     const fetchRiders = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/v1/riders`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${jwt}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        console.log("Status:", response.status);
-        console.log("Headers:", [...response.headers.entries()]);
-        const text = await response.text();
-        console.log("Raw response text:", text);
-
-        //const text = await response.text();
-        if (!response.ok) throw new Error('Error al obtener los pilotos: ' + response.statusText);
-        if (!text) throw new Error('Respuesta vacía del servidor');
-
-        const data = JSON.parse(text);
-        console.log('Pilotos obtenidos:', data);
+        const response = await fetch(apiUrl);
+    
+        if (!response.ok) {
+          const errorText = await response.text(); // por si hay texto de error
+          throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+        }
+    
+        const text = await response.text(); // primero obtenemos el texto
+        if (!text) {
+          throw new Error("La respuesta está vacía.");
+        }
+    
+        const data = JSON.parse(text); // solo si hay texto
         setRiders(data);
       } catch (error) {
-        console.error('Error fetching riders:', error);
+        console.error('Error al obtener los pilotos:', error);
       } finally {
         setLoading(false);
       }
     };
+    
 
     fetchRiders();
-  }, [jwt]);
+  }, []);
 
   if (loading) {
     return (
@@ -84,21 +61,23 @@ export default function RiderPage() {
     );
   }
 
+  if (!riders || riders.length === 0) {
+    return (
+      <View style={{ padding: 16, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>No hay pilotos disponibles.</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={{ flex: 1, padding: 20, backgroundColor: '#F0F4FF' }}>
-      <Text style={{
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#4338CA',
-        textAlign: 'center',
-        marginBottom: 20,
-      }}>
+      <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#4338CA', textAlign: 'center', marginBottom: 20 }}>
         🏍️ Pilotos
       </Text>
 
-      {riders.map((rider) => (
+      {riders.map((rider, index) => (
         <View
-          key={rider.id}
+          key={index}
           style={{
             backgroundColor: '#fff',
             borderRadius: 20,
@@ -111,34 +90,32 @@ export default function RiderPage() {
           }}
         >
           <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#4F46E5' }}>
-            {rider.name || 'Nombre no disponible'} {rider.surname || 'Apellido no disponible'}
+            {rider.name}
           </Text>
           <Text style={{ fontSize: 14, color: '#6B7280', marginTop: 4 }}>
-            Número de moto: {rider.bikeNumber || 'N/A'}
+            Número de moto: {rider.bikeNumber}
           </Text>
           <Text style={{ fontSize: 14, color: '#6B7280' }}>
-            Equipo: {rider.team?.name || 'Equipo no asignado'}
+            Equipo: {rider.team}
           </Text>
 
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: 12,
-            backgroundColor: '#E0E7FF',
-            borderRadius: 12,
-            padding: 10,
-          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: 12,
+              backgroundColor: '#E0E7FF',
+              borderRadius: 12,
+              padding: 10,
+            }}
+          >
             <Text style={{ color: '#3730A3', fontWeight: '600' }}>
-              🥇 {rider.points || 0} puntos
+              🥇 Puntos
             </Text>
             <Text style={{ color: '#4B5563' }}>
-              {getFlagEmoji(rider.nationality || 'XX')} {rider.nationality || 'Desconocido'}
+              {getFlagEmoji(rider.nationality)} {rider.nationality}
             </Text>
           </View>
-
-          <Text style={{ marginTop: 8, fontSize: 12, color: '#6B7280' }}>
-            Piloto #{rider.bikeNumber || 'N/A'}
-          </Text>
         </View>
       ))}
     </ScrollView>

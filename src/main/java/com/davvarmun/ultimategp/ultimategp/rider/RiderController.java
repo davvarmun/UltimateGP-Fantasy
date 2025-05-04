@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.List;
 
 @Tag(name = "Riders (User)", description = "Consulta de pilotos para usuarios fantasy")
@@ -40,12 +42,31 @@ public class RiderController {
         return ResponseEntity.ok(riders);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Rider> getRiderById(@PathVariable Integer id) {
-        Rider rider = riderService.findById(id);
-        
-        // Log para verificar si se recupera correctamente el rider por ID
-        logger.info("Rider encontrado: " + rider.getName() + " " + rider.getSurname());
-        return ResponseEntity.ok(rider);
+    @GetMapping("/scrape")
+    public ResponseEntity<?> scrapeRiders() {
+        try {
+            // Invocar el script de Puppeteer usando Node.js
+            ProcessBuilder processBuilder = new ProcessBuilder("node", "scraper/scrapeRiders.js");
+            Process process = processBuilder.start();
+
+            // Leer la salida del proceso
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            // Esperar a que el proceso termine
+            process.waitFor();
+
+            // Convertir la salida en un objeto JSON
+            String jsonOutput = output.toString();
+
+            return ResponseEntity.ok(jsonOutput);
+        } catch (Exception e) {
+            logger.error("Error al ejecutar el script de scraping", e);
+            return ResponseEntity.status(500).body("Error al realizar scraping");
+        }
     }
 }
