@@ -41,6 +41,8 @@ import com.google.api.client.json.JsonFactory;
 import java.util.Collections;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -131,47 +133,56 @@ public class AuthController {
         return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
     }
 
-    @PostMapping("/google-signin")
-    public ResponseEntity<Object> authenticateWithGoogle(@RequestBody Map<String, String> payload) {
-        try {
-            String idTokenString = payload.get("id_token");
+@Value("${google.client-id}")
+private String googleClientId;
 
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier
-                    .Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance())
-                    .setAudience(Collections.singletonList("74295351194-crl719vhp3sept2jau18c6b0ad61f1jr.apps.googleusercontent.com"))
-                    .build();
+@PostMapping("/google-signin")
+public ResponseEntity<Object> authenticateWithGoogle(@RequestBody Map<String, String> payload) {
+    try {
+        String idTokenString = payload.get("id_token");
 
-            GoogleIdToken idToken = verifier.verify(idTokenString);
-            if (idToken == null) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Invalid Google ID Token"));
-            }
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier
+                .Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance())
+                .setAudience(Collections.singletonList(googleClientId)) // ahora viene de properties
+                .build();
 
-            GoogleIdToken.Payload googlePayload = idToken.getPayload();
-            String email = googlePayload.getEmail();
-            String name = (String) googlePayload.get("given_name");
-            String surname = (String) googlePayload.get("family_name");
-
-            User user = userService.findByEmail(email);
-            if (user == null) {
-                user = new User();
-                user.setEmail(email);
-                user.setUsername(email); 
-                user.setName(name);
-                user.setSurname(surname);
-                user.setPassword("GOOGLE_LOGIN"); 
-                Authorities role = authoritiesService.findByAuthority("ROLE_USER");
-                user.setAuthorities(role);
-                userService.save(user);
-            }
-
-            String jwt = jwtUtils.generateTokenFromUsername(user.getUsername(), user.getAuthorities());
-
-            return ResponseEntity.ok().body(new JwtResponse(jwt, user.getId(), user.getUsername(), List.of(user.getAuthorities().getAuthority())));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(new MessageResponse("Google authentication failed"));
+        GoogleIdToken idToken = verifier.verify(idTokenString);
+        if (idToken == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Invalid Google ID Token"));
         }
+
+        GoogleIdToken.Payload googlePayload = idToken.getPayload();
+        String email = googlePayload.getEmail();
+        String name = (String) googlePayload.get("given_name");
+        String surname = (String) googlePayload.get("family_name");
+
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            user = new User();
+            user.setEmail(email);
+            user.setUsername(email);
+            user.setName(name);
+            user.setSurname(surname);
+            user.setPassword("GOOGLE_LOGIN");
+            Authorities role = authoritiesService.findByAuthority("ROLE_USER");
+            user.setAuthorities(role);
+            userService.save(user);
+        }
+
+        String jwt = jwtUtils.generateTokenFromUsername(user.getUsername(), user.getAuthorities());
+
+        return ResponseEntity.ok().body(new JwtResponse(
+                jwt,
+                user.getId(),
+                user.getUsername(),
+                List.of(user.getAuthorities().getAuthority())
+        ));
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.badRequest().body(new MessageResponse("Google authentication failed"));
     }
+}
+
 
 
 }

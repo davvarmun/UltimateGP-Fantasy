@@ -58,31 +58,38 @@ export default function Signin() {
     try {
       const { credential } = response;
       console.log("Google ID Token:", credential);
-
-      // Llama a tu API para autenticar al usuario con el id_token de Google
+  
+      // DEBUG extra para verificar el payload
+      const decoded = JSON.parse(atob(credential.split(".")[1]));
+      console.log("Decoded Google ID Token Payload:", decoded);
+  
       const authResponse = await fetch(`${apiUrl}/api/v1/auth/google-signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id_token: credential,
+          idToken: credential,
         }),
       });
-
+  
       if (!authResponse.ok) {
+        const text = await authResponse.text();
+        console.error("Google auth failed:", text);
         setErrorMessage("Error con la autenticación de Google.");
         return;
       }
-
+  
       const data = await authResponse.json();
       await storeToken(data.token);
       await checkAuth();
       router.replace("/recipes");
     } catch (error) {
       console.error("Error en la autenticación de Google: ", error);
+      setErrorMessage("Error inesperado en la autenticación.");
     }
   };
+  
 
   // Modificación del onError sin parámetros
   const handleGoogleFailure = () => {
