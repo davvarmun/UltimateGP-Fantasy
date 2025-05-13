@@ -46,7 +46,7 @@ public class AuthService {
     }
 
     public AuthResponse authenticateWithGoogle(String idTokenString) throws Exception {
-        // Usamos GoogleNetHttpTransport en lugar de NetHttpTransport
+        System.out.println("ID token received: " + idTokenString);
         JsonFactory jsonFactory = new JacksonFactory();
 
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(GoogleNetHttpTransport.newTrustedTransport(), jsonFactory) // Modificado aquí
