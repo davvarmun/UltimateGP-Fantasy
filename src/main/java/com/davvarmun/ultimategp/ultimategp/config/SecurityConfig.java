@@ -23,6 +23,13 @@ import com.davvarmun.ultimategp.ultimategp.config.jwt.AuthEntryPointJwt;
 import com.davvarmun.ultimategp.ultimategp.config.jwt.AuthTokenFilter;
 import com.davvarmun.ultimategp.ultimategp.config.services.UserDetailsServiceImpl;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -41,7 +48,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/api/v1/team", "/api/v1/team/**", "/api/v1/riders").permitAll() // Permitir libre acceso a todos los endpoints de /team
+                .requestMatchers("/api/v1/team", "/api/v1/team/**", "/api/v1/riders", "/api/v1/**").permitAll() // Permitir libre acceso a todos los endpoints de /team
                 .requestMatchers("/api/v1/auth/**").permitAll()  // Permitir libre acceso a /auth
                 .anyRequest().authenticated())                   // El resto requiere autenticación
             .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -74,4 +81,19 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://127.0.0.1:8081", "http://localhost:8081", "http://localhost:19006"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+        config.setExposedHeaders(List.of("Authorization", "Access-Control-Allow-Origin"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
 }

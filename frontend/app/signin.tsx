@@ -62,7 +62,7 @@ export default function Signin() {
       const data = JSON.parse(text);
       await storeToken(data.token);
       await checkAuth();
-      router.replace("/recipes");
+      router.replace("(tabs)/rider/RiderStanding");
     } catch (error) {
       console.error("Login error:", error);
       setErrorMessage("Error inesperado. Inténtalo de nuevo.");

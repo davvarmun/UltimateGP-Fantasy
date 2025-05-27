@@ -1,0 +1,83 @@
+[
+  {
+    "posicion": 1,
+    "piloto": "Casey Stoner",
+    "pais": "Australia",
+    "moto": "Ducati",
+    "resultados": {
+      "QAT": 1,
+      "ESP": 5,
+      "TUR": 1,
+      "CHN": 1,
+      "FRA": 3,
+      "ITA": 4,
+      "CAT": 1,
+      "GBR": 1,
+      "NED": 2,
+      "GER": 5,
+      "USA": 1,
+      "CZE": 1,
+      "SMR": 1,
+      "POR": 3,
+      "JPN": 5,
+      "AUS": 1,
+      "MAL": 1,
+      "VAL": 2
+    },
+    "puntos": 367
+  },
+  {
+    "posicion": 2,
+    "piloto": "Dani Pedrosa",
+    "pais": "España",
+    "moto": "Honda",
+    "resultados": {
+      "QAT": 3,
+      "ESP": 2,
+      "TUR": "Ret",
+      "CHN": 4,
+      "FRA": 4,
+      "ITA": 2,
+      "CAT": 3,
+      "GBR": 8,
+      "NED": 4,
+      "GER": 1,
+      "USA": 5,
+      "CZE": 4,
+      "SMR": "Ret",
+      "POR": 2,
+      "JPN": "Ret",
+      "AUS": 4,
+      "MAL": 3,
+      "VAL": 1
+    },
+    "puntos": 242
+  },
+  {
+    "posicion": 3,
+    "piloto": "Valentino Rossi",
+    "pais": "Italia",
+    "moto": "Yamaha",
+    "resultados": {
+      "QAT": 2,
+      "ESP": 1,
+      "TUR": 10,
+      "CHN": 2,
+      "FRA": 6,
+      "ITA": 1,
+      "CAT": 2,
+      "GBR": 4,
+      "NED": 1,
+      "GER": "Ret",
+      "USA": 4,
+      "CZE": 7,
+      "SMR": "Ret",
+      "POR": 1,
+      "JPN": 13,
+      "AUS": 3,
+      "MAL": 5,
+      "VAL": "Ret"
+    },
+    "puntos": 241
+  }
+]
